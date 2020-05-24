@@ -9,6 +9,10 @@ dotenv.config({ path: "./config/config.env" });
 
 const app = express();
 
+// Logger
+const logger = require("./middleware/logger");
+app.use(logger);
+
 // Mount Routers
 app.use("/api/v1/bootcamps", bootcamps);
 
