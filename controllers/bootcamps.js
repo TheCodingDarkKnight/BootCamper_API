@@ -2,9 +2,7 @@
 //@route    GET /api/v1/bootcamps
 //@access   Public
 exports.getBootcamps = (req, res, next) => {
-  res
-    .status(200)
-    .json({ success: true, msg: "Show all bootcamps", hello: req.hello }); // we can access req.hello because we have added it in middleware. We can see it on console
+  res.status(200).json({ success: true, msg: "Show all bootcamps" });
 };
 //@desc     Create bootcamp
 //@route    GET /api/v1/bootcamps
