@@ -8,8 +8,11 @@ const Bootcamp = require("../models/Bootcamp");
 //@route    GET /api/v1/bootcamps
 //@access   Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
+  // Exclude Select to get particular field
+  const { select, ...reqQuery } = req.query;
+
   // Create query string
-  let queryString = JSON.stringify(req.query);
+  let queryString = JSON.stringify(reqQuery);
 
   // Create operators ($gt, $lt, $in, etc)
   queryString = queryString.replace(
@@ -18,7 +21,13 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   );
 
   // Finding bootcamps
-  const query = Bootcamp.find(JSON.parse(queryString));
+  let query = Bootcamp.find(JSON.parse(queryString));
+
+  // Select Fields
+  if (select) {
+    const fields = select.split(",").join(" ");
+    query = query.select(fields);
+  }
 
   // Executin query
   const data = await query;
