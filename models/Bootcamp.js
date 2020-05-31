@@ -98,4 +98,11 @@ const BootcampSchema = new mongoose.Schema({
   },
 });
 
+// Mongoose middleware: document, query, pre, post
+// pre middleware
+BootcampSchema.pre("save", function (next) {
+  console.log("pre middleware", this.name);
+  next(); // to move next peice of middleware
+});
+
 module.exports = mongoose.model("Bootcamp", BootcampSchema);
