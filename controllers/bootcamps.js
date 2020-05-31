@@ -10,7 +10,7 @@ exports.getBootcamps = async (req, res, next) => {
 
     res.status(200).json({ sucess: true, count: data.length, data });
   } catch (err) {
-    res.status(400).json({ success: false });
+    next(err);
   }
 };
 //@desc     Create bootcamp
@@ -21,7 +21,7 @@ exports.createBootcamp = async (req, res, next) => {
     const data = await Bootcamp.create(req.body);
     res.status(201).json({ success: true, data });
   } catch (err) {
-    res.status(400).json({ success: false });
+    next(err);
   }
 };
 
@@ -38,12 +38,12 @@ exports.getBootcamp = async (req, res, next) => {
     }
     res.status(200).json({ success: true, data });
   } catch (err) {
-    next(new ErrorResponse(`Bootcamp not found with id ${req.params.id}`, 400));
+    next(err);
   }
 };
 
 //@desc     Update bootcamp
-//@route    GET /api/v1/bootcamps/:id
+//@route    PUT /api/v1/bootcamps/:id
 //@access   Public
 exports.updateBootcamp = async (req, res, next) => {
   try {
@@ -52,25 +52,29 @@ exports.updateBootcamp = async (req, res, next) => {
       runValidators: true,
     });
     if (!data) {
-      return res.status(400).json({ success: false });
+      return next(
+        new ErrorResponse(`Bootcamp not found with id ${req.params.id}`, 400)
+      );
     }
     res.status(200).json({ success: true, data });
   } catch (err) {
-    res.status(400).json({ success: false });
+    next(err);
   }
 };
 
 //@desc     Delete bootcamp
-//@route    GET /api/v1/bootcamps/:id
+//@route    DELETE /api/v1/bootcamps/:id
 //@access   Public
 exports.deleteBootcamp = async (req, res, next) => {
   try {
     const data = await Bootcamp.findByIdAndDelete(req.params.id);
     if (!data) {
-      return res.status(400).json({ success: false });
+      return next(
+        new ErrorResponse(`Bootcamp not found with id ${req.params.id}`, 400)
+      );
     }
     res.status(200).json({ success: true, data: {} });
   } catch (err) {
-    res.status(400).json({ success: false });
+    next(err);
   }
 };
