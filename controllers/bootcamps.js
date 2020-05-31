@@ -8,8 +8,8 @@ const Bootcamp = require("../models/Bootcamp");
 //@route    GET /api/v1/bootcamps
 //@access   Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  // Exclude Select to get particular field
-  const { select, ...reqQuery } = req.query;
+  // Exclude Select to get particular field and sort to sort by field
+  const { select, sort, ...reqQuery } = req.query;
 
   // Create query string
   let queryString = JSON.stringify(reqQuery);
@@ -27,6 +27,14 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   if (select) {
     const fields = select.split(",").join(" ");
     query = query.select(fields);
+  }
+
+  // Sort by Fields
+  if (sort) {
+    const sortBy = sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query.sort("-createdAt");
   }
 
   // Executin query
