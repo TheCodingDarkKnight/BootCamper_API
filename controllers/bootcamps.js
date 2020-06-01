@@ -8,8 +8,7 @@ const Bootcamp = require("../models/Bootcamp");
 //@route    GET /api/v1/bootcamps
 //@access   Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  // Exclude Select to get particular field and sort to sort by field
-  const { select, sort, ...reqQuery } = req.query;
+  const { select, sort, page: pageCount, limit, ...reqQuery } = req.query;
 
   // Create query string
   let queryString = JSON.stringify(reqQuery);
@@ -37,9 +36,36 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     query.sort("-createdAt");
   }
 
-  // Executin query
+  // Pagination
+  const page = parseInt(pageCount, 10) || 1;
+  const limitBy = parseInt(limit, 10) || 25;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const total = await Bootcamp.countDocuments();
+
+  query.skip(startIndex).limit(limitBy);
+
+  // Executing query
   const data = await query;
-  res.status(200).json({ sucess: true, count: data.length, data });
+
+  // Pagination result
+  const pagination = {};
+
+  if (endIndex < total) {
+    pagination.next = {
+      page: page + 1,
+      limit,
+    };
+  }
+
+  if (startIndex > 0) {
+    pagination.prev = {
+      page: page - 1,
+      limit,
+    };
+  }
+
+  res.status(200).json({ sucess: true, count: data.length, pagination, data });
 });
 //@desc     Create bootcamp
 //@route    GET /api/v1/bootcamps
